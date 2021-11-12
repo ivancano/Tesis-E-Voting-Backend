@@ -8,6 +8,7 @@ export const toCandidate = (candidate: CandidateOuput): Candidate => {
         name: candidate.name,
         lastname: candidate.lastname,
         partyId: candidate.partyId,
+        party: candidate.Party,
         createdAt: candidate.createdAt,
         updatedAt: candidate.updatedAt,
         deletedAt: candidate.deletedAt,

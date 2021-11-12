@@ -7,13 +7,14 @@ export interface CandidateAttributes {
     name: string;
     lastname: string;
     partyId: number;
+    Party?: Party
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
 }
 
 export interface CandidateInput extends Optional<CandidateAttributes, 'id'> {}
-export interface CandidateOuput extends Required<CandidateAttributes> {}
+export interface CandidateOuput extends Optional<CandidateAttributes, 'id'> {}
 
 class Candidate extends Model<CandidateAttributes, CandidateInput> implements CandidateAttributes {
     public id!: number

@@ -1,6 +1,7 @@
 import {Op} from 'sequelize';
 import Candidate, {CandidateInput, CandidateOuput} from '../models/candidate';
 import { FilterCandidatesDTO } from "../dto/candidates.dto";
+import Party from '../models/party';
 
 export const create = async (payload: CandidateInput): Promise<CandidateOuput> => {
     try {
@@ -26,7 +27,9 @@ export const update = async (id: number, payload: Partial<CandidateInput>): Prom
 }
 export const getById = async (id: number): Promise<CandidateOuput> => {
     try {
-        const candidate = await Candidate.findByPk(id);
+        const candidate = await Candidate.findByPk(id, {
+            include: Party
+        });
         if (!candidate) {
             throw new Error();
         }
@@ -53,7 +56,8 @@ export const getAll = async (filters: FilterCandidatesDTO): Promise<CandidateOup
             where: {
                 ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}})
             },
-            ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true})
+            ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true}),
+            include: Party
         })
     }
     catch(e) {
