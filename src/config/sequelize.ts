@@ -1,7 +1,10 @@
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize';
+import "./env";
+
+console.log(process.env)
 
 const db = process.env.DB_DATABASE
-console.log(db);
+console.log(process.env.DB_DATABASE);
 const username = process.env.DB_USERNAME
 const password = process.env.DB_PASSWORD
 
