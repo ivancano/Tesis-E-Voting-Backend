@@ -4,7 +4,7 @@ import "./env";
 console.log(process.env)
 
 const db = process.env.DB_DATABASE
-console.log(process.env.DB_DATABASE);
+console.log(process.env.DB_PASSWORD);
 const username = process.env.DB_USERNAME
 const password = process.env.DB_PASSWORD
 
