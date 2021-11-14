@@ -10,7 +10,7 @@ const password = process.env.DB_PASSWORD
 
 export const sequelize = new Sequelize(db, username, password, {
   dialect: "mysql",
-  port: 3306
+  port: Number(process.env.PORT) || 3306
 });
 
 sequelize.authenticate()
