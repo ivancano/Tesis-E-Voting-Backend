@@ -7,7 +7,7 @@ export const create = async (payload: ElectionInput): Promise<ElectionOuput> => 
         const election = await Election.create(payload);
         return election
     }
-    catch(e) {
+    catch(e) {console.log(e);
         throw new Error("Se produjo un error al crear la elección")
     }
 }

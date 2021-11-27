@@ -47,11 +47,13 @@ Election.init(
         },
         startTime: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
+            field: 'start_time'
         },
         endTime: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
+            field: 'end_time'
         },
         status: {
             type: DataTypes.BOOLEAN,
