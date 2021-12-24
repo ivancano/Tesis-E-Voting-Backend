@@ -1,5 +1,5 @@
 import { Router, Request, Response} from 'express';
-import { CreateVoterDTO, UpdateVoterDTO, FilterVotersDTO } from '../dto/voter.dto';
+import { CreateVoterDTO, UpdateVoterDTO, FilterVotersDTO, LoginVotersDTO } from '../dto/voter.dto';
 import * as voterController from '../controllers/voter';
 
 const candidatesRouter = Router()
@@ -55,6 +55,17 @@ candidatesRouter.post('/', async (req: Request, res: Response) => {
         const payload:CreateVoterDTO = req.body;
         const result = await voterController.create(payload);
         return res.status(200).send(result);
+    }
+    catch(e) {
+        console.log(e);
+        return res.status(500).send(e.message);
+    }
+})
+candidatesRouter.post('/login', async (req: Request, res: Response) => {
+    try {
+        const payload: LoginVotersDTO = req.body;
+        const result = await voterController.login(payload);
+        return res.status(200).send({validation: result});
     }
     catch(e) {
         console.log(e);

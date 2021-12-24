@@ -6,5 +6,6 @@ export interface Voter {
     status: boolean
     createdAt: Date
     updatedAt: Date
-    deletedAt?: Date
+    deletedAt?: Date,
+    pin: string
 }

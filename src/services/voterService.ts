@@ -60,3 +60,17 @@ export const getAll = async (filters: FilterVotersDTO): Promise<VoterOuput[]> =>
         throw new Error("Se produjo un error al obtener los votantes")
     }
 }
+export const getByDNI = async (filters: FilterVotersDTO): Promise<any> => {
+    try {
+        return Voter.findAll({
+            where: {
+                ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}}),
+                ...(filters?.dni && {dni: filters?.dni})
+            },
+            ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true})
+        })
+    }
+    catch(e) {
+        throw new Error("Se produjo un error al obtener los votantes")
+    }
+}

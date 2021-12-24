@@ -7,6 +7,7 @@ export interface VoterAttributes {
     lastname: string;
     dni: string;
     status: boolean;
+    pin: string;
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
@@ -21,6 +22,7 @@ class Voter extends Model<VoterAttributes, VoterInput> implements VoterAttribute
     public lastname!: string
     public dni!: string
     public status!: boolean
+    public pin!: string
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -44,6 +46,10 @@ Voter.init(
             allowNull: false
         },
         dni: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        pin: {
             type: DataTypes.STRING,
             allowNull: false
         },

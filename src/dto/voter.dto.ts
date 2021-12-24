@@ -5,11 +5,18 @@ export type CreateVoterDTO = {
     lastname: string;
     dni: string;
     status: boolean;
+    pin: string
 }
 
 export type UpdateVoterDTO = Required<CreateVoterDTO>
 
 export type FilterVotersDTO = {
     isDeleted?: boolean
-    includeDeleted?: boolean
+    includeDeleted?: boolean,
+    dni?: string
+}
+
+export type LoginVotersDTO = {
+    dni: string,
+    pin: string
 }

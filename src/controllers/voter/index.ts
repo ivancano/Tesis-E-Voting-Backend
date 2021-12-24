@@ -1,10 +1,13 @@
-import { CreateVoterDTO, UpdateVoterDTO, FilterVotersDTO } from "../../dto/voter.dto";
+import bcrypt from 'bcrypt';
+import { CreateVoterDTO, UpdateVoterDTO, FilterVotersDTO, LoginVotersDTO } from "../../dto/voter.dto";
 import { Voter } from "../../interfaces";
 import * as mapper from './mapper';
 import * as service from "../../services/voterService";
 
 export const create = async(payload: CreateVoterDTO): Promise<Voter> => {
     try {
+        const pin = await bcrypt.hash('123456', 10);
+        payload.pin = pin;
         const result = await service.create(payload);
         return mapper.toVoter(result)
     }
@@ -43,6 +46,16 @@ export const deleteById = async(id: number): Promise<boolean> => {
     try {
         const isDeleted = await service.deleteById(id)
         return isDeleted
+    }
+    catch(e) {
+        throw e;
+    }
+}
+export const login = async(payload: LoginVotersDTO): Promise<boolean> => {
+    try {
+        const voter = await service.getByDNI({dni: payload.dni});
+        const validate = await bcrypt.compare(payload.pin, voter[0].pin);
+        return validate;
     }
     catch(e) {
         throw e;
