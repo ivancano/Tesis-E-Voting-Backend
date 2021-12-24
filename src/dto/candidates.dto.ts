@@ -10,5 +10,6 @@ export type UpdateCandidateDTO = Required<CreateCandidateDTO>
 
 export type FilterCandidatesDTO = {
     isDeleted?: boolean
-    includeDeleted?: boolean
+    includeDeleted?: boolean,
+    partyId?: number
 }

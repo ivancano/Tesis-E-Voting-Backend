@@ -11,5 +11,6 @@ export type UpdateElectionDetailDTO = Required<CreateElectionDetailDTO>
 
 export type FilterElectionDetailsDTO = {
     isDeleted?: boolean
-    includeDeleted?: boolean
+    includeDeleted?: boolean,
+    electionId?: number
 }

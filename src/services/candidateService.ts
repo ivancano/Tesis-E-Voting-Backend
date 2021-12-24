@@ -2,6 +2,7 @@ import {Op} from 'sequelize';
 import Candidate, {CandidateInput, CandidateOuput} from '../models/candidate';
 import { FilterCandidatesDTO } from "../dto/candidates.dto";
 import Party from '../models/party';
+import { Literal } from 'sequelize/types/lib/utils';
 
 export const create = async (payload: CandidateInput): Promise<CandidateOuput> => {
     try {
@@ -54,7 +55,8 @@ export const getAll = async (filters: FilterCandidatesDTO): Promise<CandidateOup
     try {
         return Candidate.findAll({
             where: {
-                ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}})
+                ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}}),
+                ...(filters?.partyId && {partyId: filters?.partyId})
             },
             ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true}),
             include: Party

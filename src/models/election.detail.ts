@@ -1,5 +1,7 @@
 import { Sequelize, DataTypes, Model, Optional, Association } from 'sequelize';
 import { sequelize } from '../config/sequelize';
+import Candidate from './candidate';
+import Party from './party';
 
 export interface ElectionDetailAttributes {
     id: number;
@@ -7,13 +9,15 @@ export interface ElectionDetailAttributes {
     partyId: number;
     candidateId: number;
     position: string;
+    Party?: Party,
+    Candidate?: Candidate,
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
 }
 
 export interface ElectionDetailInput extends Optional<ElectionDetailAttributes, 'id'> {}
-export interface ElectionDetailOuput extends Required<ElectionDetailAttributes> {}
+export interface ElectionDetailOuput extends Optional<ElectionDetailAttributes, 'id'> {}
 
 class ElectionDetail extends Model<ElectionDetailAttributes, ElectionDetailInput> implements ElectionDetailAttributes {
     public id!: number
@@ -45,7 +49,7 @@ ElectionDetail.init(
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             references: {model: 'parties', key:'id'},
-            field: 'party_id'
+            field: 'parties_id'
         },
         candidateId: {
             type: DataTypes.INTEGER.UNSIGNED,
@@ -68,5 +72,8 @@ ElectionDetail.init(
         tableName: 'election_details'
     }
 )
+
+ElectionDetail.belongsTo(Party, {foreignKey: 'partyId'});
+ElectionDetail.belongsTo(Candidate, {foreignKey: 'candidateId'});
 
 export default ElectionDetail

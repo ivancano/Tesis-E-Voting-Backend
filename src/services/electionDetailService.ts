@@ -1,6 +1,8 @@
 import {Op} from 'sequelize';
 import ElectionDetail, {ElectionDetailInput, ElectionDetailOuput} from '../models/election.detail';
 import { FilterElectionDetailsDTO } from "../dto/elections.detail.dto";
+import Party from '../models/party';
+import Candidate from '../models/candidate';
 
 export const create = async (payload: ElectionDetailInput): Promise<ElectionDetailOuput> => {
     try {
@@ -51,9 +53,11 @@ export const getAll = async (filters: FilterElectionDetailsDTO): Promise<Electio
     try {
         return ElectionDetail.findAll({
             where: {
-                ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}})
+                ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}}),
+                ...(filters?.electionId && {electionId: filters.electionId})
             },
-            ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true})
+            ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true}),
+            include: [Party, Candidate]
         })
     }
     catch(e) {
