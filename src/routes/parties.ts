@@ -1,4 +1,4 @@
-import { Router, Request, Response} from 'express';
+import { Router, Request, Response, response} from 'express';
 import { CreatePartyDTO, UpdatePartyDTO, FilterPartysDTO } from '../dto/parties.dto';
 import * as partyController from '../controllers/party';
 
@@ -55,6 +55,16 @@ partiesRouter.post('/', async (req: Request, res: Response) => {
         const payload:CreatePartyDTO = req.body;
         const result = await partyController.create(payload);
         return res.status(200).send(result);
+    }
+    catch(e) {
+        console.log(e);
+        return res.status(500).send(e.message);
+    }
+})
+partiesRouter.post('/import', async (req: Request, res: Response) => {
+    try {
+        // console.log(req.files);
+        return res.status(200).send(true);
     }
     catch(e) {
         console.log(e);
