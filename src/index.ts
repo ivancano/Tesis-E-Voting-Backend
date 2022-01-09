@@ -13,8 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 
 const options = {
-    key: readFileSync('../selfsigned.crt'),
-    cert: readFileSync('../selfsigned.key'),
+    key: readFileSync('./selfsigned.crt'),
+    cert: readFileSync('./selfsigned.key'),
 };
 
 // define a route handler for the default home page
