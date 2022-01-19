@@ -2,6 +2,7 @@ import { Sequelize, DataTypes, Model, Optional, Association } from 'sequelize';
 import { sequelize } from '../config/sequelize';
 import Candidate from './candidate';
 import Party from './party';
+import Election from './election';
 
 export interface ElectionDetailAttributes {
     id: number;
@@ -11,6 +12,7 @@ export interface ElectionDetailAttributes {
     position: string;
     Party?: Party,
     Candidate?: Candidate,
+    Election?: Election,
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
@@ -75,5 +77,6 @@ ElectionDetail.init(
 
 ElectionDetail.belongsTo(Party, {foreignKey: 'partyId'});
 ElectionDetail.belongsTo(Candidate, {foreignKey: 'candidateId'});
+ElectionDetail.belongsTo(Election, {foreignKey: 'electionId'});
 
 export default ElectionDetail

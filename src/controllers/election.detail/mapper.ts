@@ -6,6 +6,7 @@ export const toElectionDetail = (electionDetail: ElectionDetailOuput): ElectionD
     return {
         id: electionDetail.id,
         electionId: electionDetail.electionId,
+        election: electionDetail.Election,
         partyId: electionDetail.partyId,
         party: electionDetail.Party,
         candidateId: electionDetail.candidateId,

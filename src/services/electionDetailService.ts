@@ -1,8 +1,10 @@
 import {Op} from 'sequelize';
 import ElectionDetail, {ElectionDetailInput, ElectionDetailOuput} from '../models/election.detail';
+import ElectionVoter from '../models/election.voter';
 import { FilterElectionDetailsDTO } from "../dto/elections.detail.dto";
 import Party from '../models/party';
 import Candidate from '../models/candidate';
+import Election from '../models/election';
 
 export const create = async (payload: ElectionDetailInput): Promise<ElectionDetailOuput> => {
     try {
@@ -59,6 +61,30 @@ export const getAll = async (filters: FilterElectionDetailsDTO): Promise<Electio
             ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true}),
             include: [Party, Candidate]
         })
+    }
+    catch(e) {
+        throw new Error("Se produjo un error al obtener las elecciones")
+    }
+}
+export const getElectionByVoter = async (voterId: number): Promise<any> => {
+    try {
+        const electionByVoter = await ElectionVoter.findAll({
+            where: {
+                voterId
+            }
+        });
+        if(electionByVoter.length > 0) {
+            const electionDetails = await ElectionDetail.findAll({
+                where: {
+                    electionId: electionByVoter[0].electionId
+                },
+                include: [Party, Candidate, Election]
+            });
+            return electionDetails;
+        }
+        else {
+            return null;
+        }
     }
     catch(e) {
         throw new Error("Se produjo un error al obtener las elecciones")

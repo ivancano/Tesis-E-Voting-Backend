@@ -61,5 +61,16 @@ electionDetailsRouter.post('/', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
+electionDetailsRouter.get('/election-by-voter/:voter_id', async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.voter_id)
+        const result = await electionDetailController.getElectionByVoter(id)
+        return res.status(200).send(result)
+    }
+    catch(e) {
+        console.log(e);
+        return res.status(500).send(e.message);
+    }
+})
 
 export default electionDetailsRouter

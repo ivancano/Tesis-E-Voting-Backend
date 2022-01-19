@@ -51,11 +51,14 @@ export const deleteById = async(id: number): Promise<boolean> => {
         throw e;
     }
 }
-export const login = async(payload: LoginVotersDTO): Promise<boolean> => {
+export const login = async(payload: LoginVotersDTO): Promise<any> => {
     try {
         const voter = await service.getByDNI({dni: payload.dni});
         const validate = await bcrypt.compare(payload.pin, voter[0].pin);
-        return validate;
+        return {
+            validate,
+            voter
+        };
     }
     catch(e) {
         throw e;
