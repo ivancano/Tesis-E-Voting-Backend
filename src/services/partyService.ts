@@ -1,4 +1,7 @@
 import {Op} from 'sequelize';
+import path from 'path';
+import csv from 'csv-parser';
+import * as fs from 'fs';
 import Party, {PartyInput, PartyOuput} from '../models/party';
 import { FilterPartysDTO } from "../dto/parties.dto";
 
@@ -8,6 +11,24 @@ export const create = async (payload: PartyInput): Promise<PartyOuput> => {
         return party
     }
     catch(e) {
+        throw new Error("Se produjo un error al crear el partido político")
+    }
+}
+export const createBatch = async (file: any): Promise<any> => {
+    try {
+        await fs.createReadStream(path.resolve(path.dirname(require.main.filename)+'/../tmp/csv/', file.filename))
+        .pipe(csv())
+        .on('error', error => console.error(error))
+        .on('data', async row => {
+            const newParty = new Party();
+            newParty.name = row.Nombre ? row.Nombre : '';
+            newParty.status = row.Estado === 'Activo' ? true : false;
+            await newParty.save();
+        })
+        .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`));
+        return 'Success';
+    }
+    catch(e) {console.log(e)
         throw new Error("Se produjo un error al crear el partido político")
     }
 }

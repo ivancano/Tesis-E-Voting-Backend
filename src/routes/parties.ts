@@ -1,8 +1,10 @@
 import { Router, Request, Response, response} from 'express';
+import multer from 'multer';
 import { CreatePartyDTO, UpdatePartyDTO, FilterPartysDTO } from '../dto/parties.dto';
 import * as partyController from '../controllers/party';
 
 const partiesRouter = Router()
+const upload = multer({ dest: 'tmp/csv/' });
 partiesRouter.get('/', async (req: Request, res: Response) => {
     try {
         const filters:FilterPartysDTO = req.query
@@ -61,9 +63,9 @@ partiesRouter.post('/', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
-partiesRouter.post('/import', async (req: Request, res: Response) => {
+partiesRouter.post('/batch', upload.single('file'), async (req: Request, res: Response) => {
     try {
-        // console.log(req.files);
+        const result = await partyController.createBatch(req.file);
         return res.status(200).send(true);
     }
     catch(e) {

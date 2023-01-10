@@ -12,6 +12,15 @@ export const create = async(payload: CreatePartyDTO): Promise<Party> => {
         throw e;
     }
 }
+export const createBatch = async(file: any): Promise<string> => {
+    try {
+        const result = await service.createBatch(file);
+        return result;
+    }
+    catch(e) {
+        throw e;
+    }
+}
 export const update = async (id: number, payload: UpdatePartyDTO): Promise<Party> => {
     try {
         const result = await service.update(id, payload);
