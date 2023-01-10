@@ -1,8 +1,10 @@
 import { Router, Request, Response} from 'express';
+import multer from 'multer';
 import { CreateCandidateDTO, UpdateCandidateDTO, FilterCandidatesDTO } from '../dto/candidates.dto';
 import * as candidateController from '../controllers/candidate';
 
 const candidatesRouter = Router()
+const upload = multer({ dest: 'tmp/csv/' });
 candidatesRouter.get('/', async (req: Request, res: Response) => {
     try {
         const filters:FilterCandidatesDTO = req.query
@@ -55,6 +57,16 @@ candidatesRouter.post('/', async (req: Request, res: Response) => {
         const payload:CreateCandidateDTO = req.body;
         const result = await candidateController.create(payload);
         return res.status(200).send(result);
+    }
+    catch(e) {
+        console.log(e);
+        return res.status(500).send(e.message);
+    }
+})
+candidatesRouter.post('/batch', upload.single('file'), async (req: Request, res: Response) => {
+    try {
+        const result = await candidateController.createBatch(req.file);
+        return res.status(200).send(true);
     }
     catch(e) {
         console.log(e);

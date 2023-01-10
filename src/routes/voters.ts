@@ -1,9 +1,11 @@
 import { Router, Request, Response} from 'express';
+import multer from 'multer';
 import { CreateVoterDTO, UpdateVoterDTO, FilterVotersDTO, LoginVotersDTO } from '../dto/voter.dto';
 import * as voterController from '../controllers/voter';
 
-const candidatesRouter = Router()
-candidatesRouter.get('/', async (req: Request, res: Response) => {
+const votersRouter = Router()
+const upload = multer({ dest: 'tmp/csv/' });
+votersRouter.get('/', async (req: Request, res: Response) => {
     try {
         const filters:FilterVotersDTO = req.query
         const results = await voterController.getAll(filters)
@@ -14,7 +16,7 @@ candidatesRouter.get('/', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
-candidatesRouter.get('/:id', async (req: Request, res: Response) => {
+votersRouter.get('/:id', async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
         const result = await voterController.getById(id)
@@ -25,7 +27,7 @@ candidatesRouter.get('/:id', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
-candidatesRouter.put('/:id', async (req: Request, res: Response) => {
+votersRouter.put('/:id', async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
         const payload:UpdateVoterDTO = req.body
@@ -37,7 +39,7 @@ candidatesRouter.put('/:id', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
-candidatesRouter.delete('/:id', async (req: Request, res: Response) => {
+votersRouter.delete('/:id', async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
         const result = await voterController.deleteById(id)
@@ -50,7 +52,7 @@ candidatesRouter.delete('/:id', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
-candidatesRouter.post('/', async (req: Request, res: Response) => {
+votersRouter.post('/', async (req: Request, res: Response) => {
     try {
         const payload:CreateVoterDTO = req.body;
         const result = await voterController.create(payload);
@@ -61,7 +63,7 @@ candidatesRouter.post('/', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
-candidatesRouter.post('/login', async (req: Request, res: Response) => {
+votersRouter.post('/login', async (req: Request, res: Response) => {
     try {
         const payload: LoginVotersDTO = req.body;
         const result = await voterController.login(payload);
@@ -72,5 +74,15 @@ candidatesRouter.post('/login', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
+votersRouter.post('/batch', upload.single('file'), async (req: Request, res: Response) => {
+    try {
+        const result = await voterController.createBatch(req.file);
+        return res.status(200).send(true);
+    }
+    catch(e) {
+        console.log(e);
+        return res.status(500).send(e.message);
+    }
+})
 
-export default candidatesRouter
+export default votersRouter
