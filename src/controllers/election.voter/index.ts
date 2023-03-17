@@ -12,9 +12,9 @@ export const create = async(payload: CreateElectionVoterDTO): Promise<ElectionVo
         throw e;
     }
 }
-export const update = async (id: number, payload: UpdateElectionVoterDTO): Promise<ElectionVoter> => {
+export const update = async (payload: UpdateElectionVoterDTO): Promise<ElectionVoter> => {
     try {
-        const result = await service.update(id, payload);
+        const result = await service.update(payload);
         return mapper.toElectionVoter(result)
     }
     catch(e) {

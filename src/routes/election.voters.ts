@@ -25,11 +25,11 @@ electionVotersRouter.get('/:id', async (req: Request, res: Response) => {
         return res.status(500).send(e.message);
     }
 })
-electionVotersRouter.put('/:id', async (req: Request, res: Response) => {
+electionVotersRouter.put('/', async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
         const payload:UpdateElectionVoterDTO = req.body
-        const result = await electionVoterController.update(id, payload)
+        const result = await electionVoterController.update(payload)
         return res.status(201).send(result)
     }
     catch(e) {

@@ -1,7 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import routes from './routes';
-import path from "path";
 
 const app: Application = express();
 const port = 8080; // default port to listen

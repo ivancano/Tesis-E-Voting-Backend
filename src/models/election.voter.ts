@@ -5,6 +5,7 @@ export interface ElectionVoterAttributes {
     id: number;
     electionId: number;
     voterId: number;
+    voted?: boolean;
     timestamp: Date;
     createdAt?: Date;
     updatedAt?: Date;
@@ -19,6 +20,7 @@ class ElectionVoter extends Model<ElectionVoterAttributes, ElectionVoterInput> i
     public electionId!: number
     public voterId!: number
     public timestamp!: Date
+    public voted!: boolean
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -48,6 +50,11 @@ ElectionVoter.init(
         timestamp: {
             type: DataTypes.DATE,
             allowNull: false
+        },
+        voted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     },
     {

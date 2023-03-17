@@ -7,6 +7,7 @@ export const toElectionVoter = (electionVoter: ElectionVoterOuput): ElectionVote
         id: electionVoter.id,
         electionId: electionVoter.electionId,
         voterId: electionVoter.voterId,
+        voted: electionVoter.voted,
         timestamp: electionVoter.timestamp,
         createdAt: electionVoter.createdAt,
         updatedAt: electionVoter.updatedAt,

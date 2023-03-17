@@ -6,6 +6,8 @@ export type CreateVoterDTO = {
     dni: string;
     status: boolean;
     pin: string
+    dniFront: string
+    dniBack: string
 }
 
 export type UpdateVoterDTO = Required<CreateVoterDTO>
@@ -19,4 +21,17 @@ export type FilterVotersDTO = {
 export type LoginVotersDTO = {
     dni: string,
     pin: string
+}
+
+export type ElectionVotersDTO = {
+    electionIds: number[]
+}
+
+export type VoteBlockchainDTO = {
+    electionDetailId: number,
+    electionId: number,
+    partyId: number,
+    candidateId: number,
+    position: string,
+    voterId: number
 }

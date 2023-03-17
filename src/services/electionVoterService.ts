@@ -7,13 +7,18 @@ export const create = async (payload: ElectionVoterInput): Promise<ElectionVoter
         const election = await ElectionVoter.create(payload);
         return election
     }
-    catch(e) {
+    catch(e) {console.log(e)
         throw new Error("Se produjo un error al crear la elección")
     }
 }
-export const update = async (id: number, payload: Partial<ElectionVoterInput>): Promise<ElectionVoterOuput> => {
+export const update = async (payload: Partial<ElectionVoterInput>): Promise<ElectionVoterOuput> => {
     try {
-        const election = await ElectionVoter.findByPk(id);
+        const election = await ElectionVoter.findOne({
+            where: {
+                electionId: payload.electionId,
+                voterId: payload.voterId
+            }
+        });
         if (!election) {
             throw new Error();
         }
@@ -47,11 +52,25 @@ export const deleteById = async (id: number): Promise<boolean> => {
         throw new Error("Se produjo un error al eliminar la elección")
     }
 }
+export const deleteByVoterId = async (voterId: number): Promise<boolean> => {
+    try {
+        const deletedElectionCount = await ElectionVoter.destroy({
+            where: {voterId}
+        })
+        console.log(deletedElectionCount)
+        return !!deletedElectionCount
+    }
+    catch(e) {
+        throw new Error("Se produjo un error al eliminar la elección")
+    }
+}
 export const getAll = async (filters: FilterElectionVotersDTO): Promise<ElectionVoterOuput[]> => {
     try {
         return ElectionVoter.findAll({
             where: {
-                ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}})
+                ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}}),
+                ...(filters?.voterId && {voterId: filters?.voterId}),
+                ...(filters?.electionId && {electionId: filters?.electionId})
             },
             ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true})
         })

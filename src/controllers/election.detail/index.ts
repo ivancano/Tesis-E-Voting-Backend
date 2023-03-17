@@ -48,10 +48,14 @@ export const deleteById = async(id: number): Promise<boolean> => {
         throw e;
     }
 }
-export const getElectionByVoter = async (id: number): Promise<ElectionDetail> => {
+export const getElectionByVoter = async (id: number): Promise<ElectionDetail[]> => {
     try {
         const result = await service.getElectionByVoter(id);
-        return result.map(mapper.toElectionDetail)
+        const resultArray = []
+        for(const r of result) {
+            resultArray.push(r.map(mapper.toElectionDetail))
+        }
+        return resultArray
     }
     catch(e) {
         throw e;

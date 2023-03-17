@@ -73,18 +73,19 @@ export const getElectionByVoter = async (voterId: number): Promise<any> => {
                 voterId
             }
         });
+        const result = []
         if(electionByVoter.length > 0) {
-            const electionDetails = await ElectionDetail.findAll({
-                where: {
-                    electionId: electionByVoter[0].electionId
-                },
-                include: [Party, Candidate, Election]
-            });
-            return electionDetails;
+            for(const e of electionByVoter) {
+                const electionDetails = await ElectionDetail.findAll({
+                    where: {
+                        electionId: e.electionId
+                    },
+                    include: [Party, Candidate, Election]
+                });
+                result.push(electionDetails)
+            }
         }
-        else {
-            return null;
-        }
+        return result;
     }
     catch(e) {
         throw new Error("Se produjo un error al obtener las elecciones")

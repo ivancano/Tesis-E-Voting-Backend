@@ -12,6 +12,8 @@ export const toVoter = (voter: VoterOuput): Voter => {
         createdAt: voter.createdAt,
         updatedAt: voter.updatedAt,
         deletedAt: voter.deletedAt,
-        pin: voter.pin
+        pin: voter.pin,
+        dniFront: voter.dniFront,
+        dniBack: voter.dniBack
     }
 }

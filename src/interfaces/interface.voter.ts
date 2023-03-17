@@ -7,5 +7,7 @@ export interface Voter {
     createdAt: Date
     updatedAt: Date
     deletedAt?: Date,
-    pin: string
+    pin: string,
+    dniFront: string,
+    dniBack: string
 }

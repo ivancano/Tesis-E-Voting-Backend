@@ -3,11 +3,11 @@ import path from 'path';
 import csv from 'csv-parser';
 import * as fs from 'fs';
 import Voter, {VoterInput, VoterOuput} from '../models/voter';
-import { FilterVotersDTO } from "../dto/voter.dto";
+import { FilterVotersDTO, VoteBlockchainDTO } from "../dto/voter.dto";
+import ElectionVoter from '../models/election.voter';
 
 export const create = async (payload: VoterInput): Promise<VoterOuput> => {
     try {
-        payload.pin = '1234';
         const voter = await Voter.create(payload);
         return voter
     }
@@ -16,25 +16,31 @@ export const create = async (payload: VoterInput): Promise<VoterOuput> => {
     }
 }
 export const createBatch = async (file: any): Promise<any> => {
-    try {
+    return new Promise(async (resolve, reject) => {
+        const arrayVoters: any[] = [];
         await fs.createReadStream(path.resolve(path.dirname(require.main.filename)+'/../tmp/csv/', file.filename))
         .pipe(csv())
-        .on('error', error => console.error(error))
-        .on('data', async row => {
-            const newVoter = new Voter();
-            newVoter.name = row.Nombre ? row.Nombre : '';
-            newVoter.lastname = row.Apellido ? row.Apellido : '';
-            newVoter.dni = row.DNI ? row.DNI : '';
-            newVoter.pin = '1234';
-            newVoter.status = row.Estado === 'Activo' ? true : false;
-            await newVoter.save();
+        .on('error', error => {
+            reject(false);
         })
-        .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`));
-        return 'Success';
-    }
-    catch(e) {console.log(e)
-        throw new Error("Se produjo un error al crear el partido político")
-    }
+        .on('data', row => {
+            arrayVoters.push({
+                'name': row.Nombre ? row.Nombre : '',
+                'lastname': row.Apellido ? row.Apellido : '',
+                'dni': row.DNI ? row.DNI : '',
+                'dniFront': row.DNIFrente ? row.DNIFrente : '',
+                'dniBack': row.DNIAtras ? row.DNIAtras : '',
+                'status': row.Estado === 'Activo' ? true : false
+            });
+        });
+        try {
+            await Voter.batchProcess(arrayVoters);
+            resolve(true);
+        }
+        catch(error) {
+            reject(false);
+        }
+    });
 }
 export const update = async (id: number, payload: Partial<VoterInput>): Promise<VoterOuput> => {
     try {
@@ -92,10 +98,40 @@ export const getByDNI = async (filters: FilterVotersDTO): Promise<any> => {
                 ...(filters?.isDeleted && {deletedAt: {[Op.not]: null}}),
                 ...(filters?.dni && {dni: filters?.dni})
             },
-            ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true})
+            ...((filters?.isDeleted || filters?.includeDeleted) && {paranoid: true}),
+            include: [ElectionVoter]
         })
     }
     catch(e) {
         throw new Error("Se produjo un error al obtener los votantes")
+    }
+}
+export const voteBlockchain = async (payload: VoteBlockchainDTO): Promise<any> => {
+    try {
+        const driver = require('bigchaindb-driver')
+        const BIGCHAINDB_API = 'http://localhost:9984/api/v1/'
+        const alice = new driver.Ed25519Keypair();
+        const bigchainPayload = {
+            electionDetailId: payload.electionDetailId,
+            electionId: 'election-'+payload.electionId,
+            partyId: payload.partyId,
+            candidateId: payload.candidateId,
+            position: payload.position,
+            timestamp: new Date()
+        }
+        const tx = driver.Transaction.makeCreateTransaction(
+            bigchainPayload,
+            null,
+            [ driver.Transaction.makeOutput(
+                    driver.Transaction.makeEd25519Condition(alice.publicKey))
+            ],
+            alice.publicKey
+        )
+        const txSigned = driver.Transaction.signTransaction(tx, alice.privateKey)
+        const conn = new driver.Connection(BIGCHAINDB_API);
+        conn.postTransactionCommit(txSigned).then((retrievedTx: { id: any; }) => console.log('Transaction', retrievedTx.id, 'successfully posted.'))
+    }
+    catch(e) {console.log(e)
+        throw new Error("Se produjo un error al votar")
     }
 }
